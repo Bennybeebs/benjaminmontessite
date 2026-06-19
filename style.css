@@ -1,0 +1,443 @@
+/* ============================================================
+   THEME TOKENS — Elysium
+   Swap only these variables to change the entire site theme.
+   ============================================================ */
+:root {
+  --bg:      #1C1510;
+  --text:    #EDD9BB;
+  --accent:  #7FA8B8;   /* sky blue — use sparingly */
+  --accent2: #C97A3D;   /* desaturated orange */
+  --line:    #2E2218;
+
+  --font-display: 'Lora', serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7A6A54;
+}
+
+.nav-links a {
+  color: #7A6A54;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-shop { opacity: 0.45; cursor: default; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  padding: 80px 56px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Placeholder — replace src with real field image when ready */
+.hero-bg-placeholder {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(28, 21, 16, 0.20) 0%,
+      rgba(28, 21, 16, 0.65) 55%,
+      rgba(28, 21, 16, 1.00) 100%
+    ),
+    url('images/Elysian Field.jpg') center / cover no-repeat;
+  z-index: 0;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+
+/* ---- Page headers (shared across Releases, Blog, About) ---- */
+.page-header {
+  padding: 64px 56px 48px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-top: 16px;
+}
+
+.hero-title {
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero-title-main {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 500;
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.hero-title-main em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+.hero-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0;
+  color: #7A6A54;
+  line-height: 1.2;
+}
+
+.hero-sub {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #7A6A54;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  margin-bottom: 40px;
+  max-width: 480px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--text);
+  color: var(--bg);
+  padding: 12px 24px;
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+.btn-primary:hover { opacity: 0.8; }
+
+.read-more {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  transition: opacity 0.15s;
+}
+
+.read-more:hover { opacity: 0.65; }
+
+.btn-ghost {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7A6A54;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* ============================================================
+   GRADIENT STRIP
+   ============================================================ */
+.strip {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent2) 0%, var(--accent) 100%);
+}
+
+/* ============================================================
+   FILTER BAR (shared: Releases, Scores)
+   ============================================================ */
+.filter-bar {
+  display: flex;
+  gap: 0;
+  padding: 0 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7A6A54;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 16px 20px;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.filter-btn:hover { color: var(--text); }
+
+.filter-btn.active {
+  color: var(--text);
+  border-bottom-color: var(--accent2);
+}
+
+/* ============================================================
+   RELEASE CARDS
+   ============================================================ */
+.release {
+  border-bottom: 1px solid var(--line);
+}
+
+.release-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+}
+
+.release-card {
+  background: var(--bg);
+  padding: 40px 36px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin-top: 48px;
+}
+
+.card-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #7A6A54;
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+}
+
+.card-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-top: 24px;
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+.card-link:hover { opacity: 0.65; }
+
+/* ============================================================
+   META ROW (piece details)
+   ============================================================ */
+.release-details {
+  border-top: 1px solid var(--line);
+  padding: 0 36px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 0;
+}
+
+.meta-item {
+  flex: 1;
+  padding: 24px 28px;
+  border-right: 1px solid var(--line);
+}
+
+.meta-item:last-child { border-right: none; }
+
+.meta-item dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.meta-item dd {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--text);
+}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about {
+  padding: 72px 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-inner {
+  max-width: 560px;
+}
+
+.about-inner .eyebrow {
+  margin-bottom: 20px;
+}
+
+.about-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 56px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7A6A54;
+}
+
+.footer-social {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footer-social a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7A6A54;
+  transition: color 0.15s;
+}
+
+.footer-social a:hover { color: var(--text); }
+
+/* ============================================================
+   RESPONSIVE — basic mobile pass
+   ============================================================ */
+@media (max-width: 768px) {
+  .nav { padding: 20px 24px; }
+  .hero { padding: 56px 24px 48px; }
+  .about { padding: 56px 24px; }
+  .footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+
+  .release-grid { grid-template-columns: 1fr; }
+  .release-card { min-height: auto; padding: 32px 24px; }
+
+  .meta-row { flex-wrap: wrap; }
+  .meta-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--line); padding: 18px 24px; }
+  .meta-item:nth-last-child(-n+2) { border-bottom: none; }
+
+  .release-details { padding: 0; }
+
+  .nav-links { gap: 18px; }
+}
+
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .nav-links { gap: 14px; }
+  .nav-name { font-size: 11px; }
+}

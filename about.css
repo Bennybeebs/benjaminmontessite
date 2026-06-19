@@ -1,0 +1,170 @@
+/* ============================================================
+   ABOUT PAGE — layout and components
+   Inherits all theme tokens from style.css
+   ============================================================ */
+
+/* ---- Page header ---- */
+.page-header {
+  padding: 64px 56px 48px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-top: 16px;
+}
+
+/* ---- Two-column layout ---- */
+.about-page {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  min-height: 60vh;
+}
+
+/* ---- Portrait column ---- */
+.about-portrait-col {
+  border-right: 1px solid var(--line);
+  padding: 48px 36px;
+}
+
+.portrait-wrap {
+  position: sticky;
+  top: 32px;
+}
+
+.portrait-img {
+  width: 100%;
+  display: block;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+  filter: sepia(12%) contrast(1.02);
+}
+
+.portrait-meta {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.portrait-meta-item {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.portrait-meta-item:last-child {
+  border-bottom: none;
+}
+
+.portrait-meta-item dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.portrait-meta-item dd {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* ---- Bio text column ---- */
+.about-text-col {
+  padding: 56px 64px 72px;
+}
+
+.bio-section {
+  margin-bottom: 40px;
+}
+
+.bio-lead {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.bio-heading {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.bio-body {
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.bio-body em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+.bio-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .about-page {
+    grid-template-columns: 1fr;
+  }
+
+  .about-portrait-col {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 36px 24px;
+  }
+
+  .portrait-wrap {
+    position: static;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .portrait-img {
+    aspect-ratio: 3 / 4;
+  }
+
+  .about-text-col {
+    padding: 40px 24px 56px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .page-header { padding: 40px 24px 32px; }
+
+  .portrait-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .portrait-img {
+    max-width: 240px;
+  }
+}

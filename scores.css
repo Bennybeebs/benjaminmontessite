@@ -1,0 +1,199 @@
+/* ============================================================
+   SCORES PAGE
+   ============================================================ */
+
+.scores-main {
+  padding: 48px 56px 80px;
+}
+
+/* ============================================================
+   GRID
+   ============================================================ */
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+/* ============================================================
+   SCORE CARD
+   ============================================================ */
+.score-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s;
+}
+
+.score-card:hover {
+  border-color: #4A3828;
+}
+
+/* ---- Preview area ---- */
+.score-preview {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: #120E0A;
+  overflow: hidden;
+}
+
+.score-preview-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Placeholder shown when no preview image is available */
+.score-preview-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 18px,
+    rgba(237, 217, 187, 0.04) 18px,
+    rgba(237, 217, 187, 0.04) 19px
+  );
+}
+
+/* Hide placeholder when a real image is present */
+.score-preview-img ~ .score-preview-placeholder {
+  display: none;
+}
+
+.score-preview-icon {
+  font-size: 48px;
+  opacity: 0.12;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* ---- Info area ---- */
+.score-info {
+  padding: 24px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* ---- Badge ---- */
+.score-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  align-self: flex-start;
+}
+
+.score-badge--free {
+  background: rgba(127, 168, 184, 0.15);
+  color: var(--accent);
+}
+
+.score-badge--paid {
+  background: rgba(201, 122, 61, 0.15);
+  color: var(--accent2);
+}
+
+.score-badge--soon {
+  background: rgba(237, 217, 187, 0.08);
+  color: #7A6A54;
+}
+
+/* ---- Title & forces ---- */
+.score-title {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--accent2);
+  line-height: 1.25;
+  margin-top: 4px;
+}
+
+.score-forces {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7A6A54;
+}
+
+/* ---- Meta (Year / Duration) ---- */
+.score-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.score-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.score-meta-item dt {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.score-meta-item dd {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* ---- Action link ---- */
+.score-action {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: auto;
+  padding-top: 16px;
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+.score-action--free {
+  color: var(--accent);
+}
+
+.score-action--free:hover { opacity: 0.65; }
+
+.score-action--paid {
+  color: var(--accent2);
+}
+
+.score-action--paid:hover { opacity: 0.65; }
+
+.score-action--soon {
+  color: #4A3828;
+  cursor: default;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+  .scores-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .scores-main { padding: 36px 24px 56px; }
+  .scores-grid { grid-template-columns: 1fr; gap: 20px; }
+}

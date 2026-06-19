@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Benjamin Montes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="blog.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-name">Benjamin Montes</a>
+    <ul class="nav-links">
+      <li><a href="scores.html">Scores</a></li>
+      <li><a href="releases.html">Releases</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="blog.html" class="nav-active">Blog</a></li>
+      <li><a href="#" class="nav-shop">Shop</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <p class="eyebrow">Notes &amp; Process</p>
+    <h1 class="page-title">Blog</h1>
+  </header>
+
+  <div class="strip" role="separator"></div>
+
+  <!-- ============================================================
+       POSTS — copy one <article class="post-card"> block to add a
+       new entry. Newest post should go first (top of the list).
+       ============================================================ -->
+  <main class="blog-main">
+
+    <!-- POST: To add a new post, duplicate this block and place it above the others -->
+
+    <article class="post-card">
+      <div class="post-header">
+        <div class="post-meta">
+          <span class="post-date">June 17, 2026</span>
+          <span class="post-tag">Announcement</span>
+        </div>
+        <h2 class="post-title">Welcome to the Benjamin Montes blog!</h2>
+      </div>
+      <div class="post-body-wrap">
+        <div class="post-body">
+          <p>This is the blog page for my website. I personally write all of these posts to share updates and information about my music. More of these will show up here with time. For now, enjoy the new website!</p>
+        </div>
+        <div class="post-fade"></div>
+      </div>
+      <button class="post-expand-btn" aria-expanded="false">
+        <span class="btn-text">Read more</span>
+        <svg class="btn-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 2L6 10M6 10L2 6M6 10L10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </article>
+
+  </main>
+
+  <footer class="footer">
+    <span class="footer-name">&copy; 2026 Benjamin Montes</span>
+    <nav class="footer-social">
+      <a href="https://instagram.com/benjaminsmontes" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/61577914032293/" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://x.com/benjaminsmontes" target="_blank" rel="noopener">X</a>
+      <a href="https://open.spotify.com/artist/6ps73RGhMDePn7EByVew5k?si=Z1z0tnssSOyLZ9sCfh_7qw" target="_blank" rel="noopener">Spotify</a>
+      <a href="https://music.apple.com/us/artist/benjamin-montes/1446550968" target="_blank" rel="noopener">Apple Music</a>
+    </nav>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.post-expand-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.post-card');
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+
+        btn.setAttribute('aria-expanded', !expanded);
+        card.classList.toggle('post-card--expanded', !expanded);
+        btn.querySelector('.btn-text').textContent = expanded ? 'Read more' : 'Read less';
+      });
+    });
+  </script>
+
+</body>
+</html>
+

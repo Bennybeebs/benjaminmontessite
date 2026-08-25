@@ -3,13 +3,13 @@
    ============================================================ */
 
 .videos-page {
-  background: #0E0B08;
+  background: #0D0200;
   color: #E8D8BC;
 }
 
 /* ---- Nav override for dark background ---- */
 .nav--dark {
-  background: #0E0B08;
+  background: #0D0200;
   border-bottom: 1px solid #2A2218;
 }
 
@@ -160,7 +160,7 @@
 
 /* ---- Footer override for dark background ---- */
 .footer--dark {
-  background: #0E0B08;
+  background: #0D0200;
   border-top: 1px solid #2A2218;
   color: #7A6A54;
 }

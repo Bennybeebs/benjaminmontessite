@@ -3,13 +3,13 @@
    Swap only these variables to change the entire site theme.
    ============================================================ */
 :root {
-  --bg:      #1C1510;
-  --text:    #EDD9BB;
-  --accent:  #7FA8B8;   /* sky blue — use sparingly */
-  --accent2: #C97A3D;   /* desaturated orange */
-  --line:    #2E2218;
+  --bg:      #0D0200;
+  --text:    #F0DEC8;
+  --accent:  #8C1A30;   /* deep burgundy */
+  --accent2: #C09035;   /* antique gold */
+  --line:    #2A0800;
 
-  --font-display: 'Lora', serif;
+  --font-display: 'Cormorant Garamond', 'Georgia', serif;
   --font-mono:    'IBM Plex Mono', monospace;
 }
 
@@ -73,9 +73,13 @@ a { color: inherit; text-decoration: none; }
    HERO
    ============================================================ */
 .hero {
-  padding: 80px 56px 64px;
+  padding: 80px 56px 100px;
+  min-height: 70vh;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Placeholder — replace src with real field image when ready */
@@ -85,11 +89,11 @@ a { color: inherit; text-decoration: none; }
   background:
     linear-gradient(
       to bottom,
-      rgba(28, 21, 16, 0.20) 0%,
-      rgba(28, 21, 16, 0.65) 55%,
-      rgba(28, 21, 16, 1.00) 100%
+      rgba(13, 2, 0, 0.20) 0%,
+      rgba(13, 2, 0, 0.65) 55%,
+      rgba(13, 2, 0, 1.00) 100%
     ),
-    url('images/Elysian Field.jpg') center / cover no-repeat;
+    url('images/covers/Olympus.jpg') center / cover no-repeat;
   z-index: 0;
 }
 
@@ -97,6 +101,7 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   z-index: 1;
   max-width: 900px;
+  text-align: center;
 }
 
 .eyebrow {
@@ -131,7 +136,7 @@ a { color: inherit; text-decoration: none; }
 
 .hero-title-main {
   font-family: var(--font-display);
-  font-size: clamp(48px, 7vw, 96px);
+  font-size: clamp(72px, 12vw, 160px);
   font-weight: 500;
   line-height: 1.0;
   letter-spacing: -0.01em;
@@ -142,6 +147,22 @@ a { color: inherit; text-decoration: none; }
 .hero-title-main em {
   font-style: italic;
   color: var(--accent2);
+}
+
+.hero-coming-soon {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: #C4A0A8;
+  margin-top: 24px;
+}
+
+.hero-label {
+  color: #D4B8BC;
+  font-weight: 600;
+  font-style: normal;
 }
 
 .hero-subtitle {
@@ -252,6 +273,45 @@ a { color: inherit; text-decoration: none; }
 .filter-btn.active {
   color: var(--text);
   border-bottom-color: var(--accent2);
+}
+
+/* ============================================================
+   ALBUM FEATURE (homepage)
+   ============================================================ */
+.album-feature {
+  border-bottom: 1px solid var(--line);
+  padding: 72px 56px;
+}
+.album-feature-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 64px;
+}
+.album-feature-img {
+  width: 340px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: cover;
+}
+.album-feature-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 36px;
+  padding-top: 8px;
+}
+
+.album-feature-read-more {
+  align-self: flex-start;
+}
+
+.album-feature-desc {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.45;
+  color: #E8C0CC;
 }
 
 /* ============================================================
@@ -423,6 +483,10 @@ a { color: inherit; text-decoration: none; }
   .hero { padding: 56px 24px 48px; }
   .about { padding: 56px 24px; }
   .footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+
+  .album-feature { padding: 48px 24px; }
+  .album-feature-inner { flex-direction: column; gap: 32px; }
+  .album-feature-img { width: 100%; height: auto; }
 
   .release-grid { grid-template-columns: 1fr; }
   .release-card { min-height: auto; padding: 32px 24px; }

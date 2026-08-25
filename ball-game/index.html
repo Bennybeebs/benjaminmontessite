@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roll — 10 Levels</title>
+<style>
+  :root{
+    --bg: #0d0f14;
+    --panel: #161a22;
+    --accent: #5eead4;
+    --accent2: #f472b6;
+    --danger: #ef4444;
+    --text: #e5e7eb;
+    --muted: #8b93a1;
+  }
+  *{ box-sizing: border-box; }
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: radial-gradient(1200px 800px at 50% -10%, #1b2130 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  #wrap{
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    padding: 16px;
+  }
+  #hud{
+    width: 800px; max-width: 92vw;
+    display:flex; align-items:center; justify-content:space-between;
+    font-size: 14px; color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  #hud b{ color: var(--text); }
+  #hud .pill{
+    background: var(--panel);
+    border: 1px solid #262c39;
+    border-radius: 999px;
+    padding: 5px 14px;
+  }
+  canvas{
+    background: #11141b;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 0 0 1px #232838;
+    display:block;
+    max-width: 92vw;
+    height: auto;
+  }
+  #hint{
+    color: var(--muted);
+    font-size: 13px;
+    text-align:center;
+    max-width: 800px;
+  }
+  #overlay{
+    position: fixed; inset:0;
+    background: rgba(8,9,13,0.86);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 10;
+  }
+  #overlay.hidden{ display:none; }
+  .card{
+    background: var(--panel);
+    border: 1px solid #262c39;
+    border-radius: 16px;
+    padding: 36px 40px;
+    max-width: 420px;
+    text-align:center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  .card h1{
+    margin: 0 0 6px;
+    font-size: 26px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .card p{ color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .card .big{ font-size: 40px; margin: 10px 0; }
+  button{
+    appearance:none; border:none; cursor:pointer;
+    background: linear-gradient(135deg, var(--accent), #22d3ee);
+    color: #0a0e14; font-weight: 700;
+    padding: 11px 26px; border-radius: 10px;
+    font-size: 15px; margin-top: 10px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(94,234,212,0.25); }
+  button:active{ transform: translateY(0); }
+  button.secondary{
+    background: transparent;
+    border: 1px solid #333a4a;
+    color: var(--text);
+    margin-left: 8px;
+  }
+  .dots{ display:flex; gap:6px; justify-content:center; margin: 14px 0; flex-wrap: wrap; }
+  .dot{
+    width: 22px; height: 22px; border-radius: 6px;
+    background: #232838; color: var(--muted);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 11px; font-weight: 700;
+  }
+  .dot.done{ background: var(--accent); color:#0a0e14; }
+  .dot.current{ outline: 2px solid var(--accent2); }
+  kbd{
+    background:#1f2430; border:1px solid #333a4a; border-bottom-width:2px;
+    border-radius:4px; padding:1px 6px; font-size:12px; color: var(--text);
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="hud">
+    <div class="pill">Level <b id="hudLevel">1</b> / 10</div>
+    <div class="pill" id="hudLevelName">Warm-Up</div>
+    <div class="pill">Time <b id="hudTime">0.0</b>s</div>
+    <div class="pill">Best <b id="hudBest">—</b></div>
+  </div>
+  <canvas id="game" width="800" height="600"></canvas>
+  <div id="hint">Move with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys. Reach the glowing goal without falling into the dark holes. <kbd>R</kbd> restarts the level.</div>
+</div>
+
+<div id="overlay">
+  <div class="card" id="cardContent">
+    <h1>Roll</h1>
+    <p>A ball. Ten stages. Each one meaner than the last.</p>
+    <p>Guide the ball into the goal zone. Avoid holes and moving hazards — they only get worse from here.</p>
+    <button id="startBtn">Start Rolling</button>
+  </div>
+</div>
+
+<script>
+(() => {
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+const hudLevel = document.getElementById('hudLevel');
+const hudLevelName = document.getElementById('hudLevelName');
+const hudTime = document.getElementById('hudTime');
+const hudBest = document.getElementById('hudBest');
+const overlay = document.getElementById('overlay');
+const cardContent = document.getElementById('cardContent');
+const startBtn = document.getElementById('startBtn');
+
+// ---------- Level definitions ----------
+// Coordinates in an 800x600 stage. Walls/holes/moving obstacles/goal per level.
+// Difficulty ramps via: maze complexity, hole count, moving hazards, friction (slipperiness), goal size.
+
+function wall(x,y,w,h){ return {x,y,w,h}; }
+function hole(x,y,r){ return {x,y,r}; }
+function mover(x,y,w,h,axis,range,speed,phase){ return {x,y,w,h,axis,range,speed,phase: phase||0, baseX:x, baseY:y}; }
+
+const LEVELS = [
+  { // 1 — Warm-Up
+    name: "Warm-Up",
+    friction: 0.965,
+    accel: 900,
+    start: {x:70, y:300},
+    goal: {x:700, y:260, w:70, h:80},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+    ],
+    holes: [],
+    movers: [],
+  },
+  { // 2 — First Turns
+    name: "First Turns",
+    friction: 0.962,
+    accel: 900,
+    start: {x:60, y:60},
+    goal: {x:700, y:500, w:70, h:70},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(150,20,20,340),
+      wall(320,240,20,340),
+      wall(490,20,20,340),
+      wall(650,240,20,340-60),
+    ],
+    holes: [],
+    movers: [],
+  },
+  { // 3 — First Pitfalls
+    name: "First Pitfalls",
+    friction: 0.96,
+    accel: 900,
+    start: {x:60, y:300},
+    goal: {x:710, y:300, w:60, h:70},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(260,0,20,240),
+      wall(260,360,20,240),
+      wall(520,120,20,360),
+    ],
+    holes: [ hole(390,180,34), hole(390,420,34) ],
+    movers: [],
+  },
+  { // 4 — Corridor Nerves
+    name: "Corridor Nerves",
+    friction: 0.955,
+    accel: 880,
+    start: {x:60, y:60},
+    goal: {x:60, y:500, w:70, h:70},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(150,20,20,260),
+      wall(150,20+260,470,20),
+      wall(600,20,20,260),
+      wall(300,300,20,280),
+      wall(300,300,320,20),
+      wall(600,340,20,240),
+    ],
+    holes: [ hole(450,300,30) ],
+    movers: [],
+  },
+  { // 5 — The Sieve
+    name: "The Sieve",
+    friction: 0.95,
+    accel: 860,
+    start: {x:400, y:60},
+    goal: {x:400, y:500, w:70, h:70},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(20,180,300,20),
+      wall(480,180,300,20),
+      wall(20,400,300,20),
+      wall(480,400,300,20),
+    ],
+    holes: [ hole(180,290,32), hole(400,290,32), hole(620,290,32), hole(300,510,26), hole(500,510,26) ],
+    movers: [],
+  },
+  { // 6 — Moving Trouble
+    name: "Moving Trouble",
+    friction: 0.95,
+    accel: 860,
+    start: {x:60, y:300},
+    goal: {x:730, y:300, w:55, h:70},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(200,0,20,220),
+      wall(200,380,20,220),
+      wall(560,0,20,220),
+      wall(560,380,20,220),
+    ],
+    holes: [ hole(380,300,30) ],
+    movers: [ mover(340,240,40,120,'y',110,1.4) ],
+  },
+  { // 7 — Crossfire
+    name: "Crossfire",
+    friction: 0.945,
+    accel: 850,
+    start: {x:60, y:60},
+    goal: {x:720, y:520, w:60, h:60},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(20,220,260,20),
+      wall(520,220,260,20),
+      wall(260,380,280,20),
+    ],
+    holes: [ hole(150,500,28), hole(650,120,28) ],
+    movers: [
+      mover(320,20,30,140,'y',150,1.6),
+      mover(450,440,30,140,'y',150,1.6,Math.PI),
+    ],
+  },
+  { // 8 — Tight Squeeze
+    name: "Tight Squeeze",
+    friction: 0.94,
+    accel: 840,
+    start: {x:400, y:60},
+    goal: {x:400, y:520, w:56, h:56},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(200,150,400,20),
+      wall(200,150,20,150),
+      wall(580,150,20,150),
+      wall(200,300,20,150),
+      wall(580,300,20,150),
+      wall(200,430,400,20),
+    ],
+    holes: [ hole(300,225,26), hole(500,225,26), hole(300,365,26), hole(500,365,26) ],
+    movers: [
+      mover(370,180,60,20,'x',60,2.0),
+      mover(370,400,60,20,'x',60,2.0,Math.PI),
+    ],
+  },
+  { // 9 — Gauntlet
+    name: "Gauntlet",
+    friction: 0.935,
+    accel: 830,
+    start: {x:60, y:540},
+    goal: {x:720, y:60, w:56, h:56},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(150,140,20,460),
+      wall(300,0,20,460),
+      wall(450,140,20,460),
+      wall(600,0,20,460),
+    ],
+    holes: [ hole(225,500,30), hole(375,100,30), hole(525,500,30) ],
+    movers: [
+      mover(150,260,20,90,'y',120,1.8),
+      mover(300,60,20,90,'y',120,1.8,Math.PI/2),
+      mover(450,260,20,90,'y',120,1.8,Math.PI),
+      mover(600,60,20,90,'y',120,1.8,Math.PI*1.5),
+    ],
+  },
+  { // 10 — Final Descent
+    name: "Final Descent",
+    friction: 0.925,
+    accel: 820,
+    start: {x:400, y:60},
+    goal: {x:400, y:520, w:50, h:50},
+    walls: [
+      wall(0,0,W,20), wall(0,H-20,W,20), wall(0,0,20,H), wall(W-20,0,20,H),
+      wall(120,140,220,20),
+      wall(460,140,220,20),
+      wall(120,140,20,180),
+      wall(660,140,20,180),
+      wall(230,320,20,190),
+      wall(550,320,20,190),
+      wall(230,320,340,20),
+    ],
+    holes: [ hole(400,80+150,26), hole(150,420,26), hole(650,420,26), hole(320,470,24), hole(480,470,24) ],
+    movers: [
+      mover(280,200,60,18,'x',80,2.4),
+      mover(460,200,60,18,'x',80,2.4,Math.PI),
+      mover(260,380,18,80,'y',60,2.6),
+      mover(520,380,18,80,'y',60,2.6,Math.PI),
+    ],
+  },
+];
+
+// ---------- State ----------
+const BALL_R = 13;
+let levelIndex = 0;
+let ball = {x:0,y:0,vx:0,vy:0};
+let keys = {};
+let running = false;
+let levelStartTime = 0;
+let elapsed = 0;
+let fallAnim = 0; // 0..1 shrink animation when falling in hole
+let falling = false;
+let winFlash = 0;
+let completed = JSON.parse(localStorage.getItem('roll_completed') || '[]');
+let bestTimes = JSON.parse(localStorage.getItem('roll_best') || '{}');
+
+function loadLevel(i){
+  const lvl = LEVELS[i];
+  ball.x = lvl.start.x;
+  ball.y = lvl.start.y;
+  ball.vx = 0; ball.vy = 0;
+  falling = false; fallAnim = 0; winFlash = 0;
+  levelStartTime = performance.now();
+  elapsed = 0;
+  hudLevel.textContent = (i+1);
+  hudLevelName.textContent = lvl.name;
+  updateBestHud();
+}
+
+function updateBestHud(){
+  const b = bestTimes[levelIndex];
+  hudBest.textContent = b ? b.toFixed(1)+'s' : '—';
+}
+
+function circleRectCollide(cx, cy, r, rect){
+  const nx = Math.max(rect.x, Math.min(cx, rect.x+rect.w));
+  const ny = Math.max(rect.y, Math.min(cy, rect.y+rect.h));
+  const dx = cx-nx, dy = cy-ny;
+  const dist2 = dx*dx+dy*dy;
+  if(dist2 < r*r){
+    const dist = Math.sqrt(dist2) || 0.0001;
+    const overlap = r - dist;
+    return { hit:true, nx: dx/dist, ny: dy/dist, overlap };
+  }
+  return { hit:false };
+}
+
+function updateMovers(dt, t){
+  for(const m of LEVELS[levelIndex].movers){
+    const offset = Math.sin(t*m.speed + m.phase) * (m.range/2);
+    if(m.axis === 'x') m.x = m.baseX + offset;
+    else m.y = m.baseY + offset;
+  }
+}
+
+let tGlobal = 0;
+
+function update(dt){
+  if(!running) return;
+  tGlobal += dt;
+  const lvl = LEVELS[levelIndex];
+  updateMovers(dt, tGlobal);
+
+  if(!falling){
+    let ax = 0, ay = 0;
+    if(keys['arrowleft']||keys['a']) ax -= 1;
+    if(keys['arrowright']||keys['d']) ax += 1;
+    if(keys['arrowup']||keys['w']) ay -= 1;
+    if(keys['arrowdown']||keys['s']) ay += 1;
+    if(ax && ay){ ax *= 0.7071; ay *= 0.7071; }
+    ball.vx += ax * lvl.accel * dt;
+    ball.vy += ay * lvl.accel * dt;
+
+    // friction
+    const f = Math.pow(lvl.friction, dt*60);
+    ball.vx *= f; ball.vy *= f;
+
+    // integrate substeps for stability
+    const steps = 4;
+    for(let s=0; s<steps; s++){
+      ball.x += ball.vx*dt/steps;
+      ball.y += ball.vy*dt/steps;
+
+      for(const w of lvl.walls){
+        const c = circleRectCollide(ball.x, ball.y, BALL_R, w);
+        if(c.hit){
+          ball.x += c.nx * c.overlap;
+          ball.y += c.ny * c.overlap;
+          const vn = ball.vx*c.nx + ball.vy*c.ny;
+          if(vn < 0){
+            ball.vx -= vn*c.nx*1.6;
+            ball.vy -= vn*c.ny*1.6;
+          }
+        }
+      }
+      for(const m of lvl.movers){
+        const c = circleRectCollide(ball.x, ball.y, BALL_R, m);
+        if(c.hit){
+          ball.x += c.nx * c.overlap;
+          ball.y += c.ny * c.overlap;
+          const vn = ball.vx*c.nx + ball.vy*c.ny;
+          if(vn < 0){
+            ball.vx -= vn*c.nx*1.6;
+            ball.vy -= vn*c.ny*1.6;
+          }
+        }
+      }
+    }
+
+    // holes
+    for(const h of lvl.holes){
+      const dx = ball.x-h.x, dy = ball.y-h.y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if(d < h.r - 2){
+        falling = true;
+        break;
+      }
+    }
+
+    // goal check
+    const g = lvl.goal;
+    if(ball.x > g.x && ball.x < g.x+g.w && ball.y > g.y && ball.y < g.y+g.h){
+      onLevelComplete();
+    }
+
+    elapsed = (performance.now() - levelStartTime)/1000;
+    hudTime.textContent = elapsed.toFixed(1);
+  } else {
+    fallAnim += dt*2.2;
+    ball.vx *= 0.9; ball.vy *= 0.9;
+    if(fallAnim >= 1){
+      loadLevel(levelIndex);
+    }
+  }
+}
+
+function onLevelComplete(){
+  running = false;
+  const t = elapsed;
+  const prevBest = bestTimes[levelIndex];
+  if(!prevBest || t < prevBest){
+    bestTimes[levelIndex] = t;
+    localStorage.setItem('roll_best', JSON.stringify(bestTimes));
+  }
+  if(!completed.includes(levelIndex)){
+    completed.push(levelIndex);
+    localStorage.setItem('roll_completed', JSON.stringify(completed));
+  }
+  showLevelCompleteCard(t, prevBest);
+}
+
+function dotsHtml(){
+  let html = '<div class="dots">';
+  for(let i=0;i<LEVELS.length;i++){
+    let cls = 'dot';
+    if(completed.includes(i)) cls += ' done';
+    if(i===levelIndex) cls += ' current';
+    html += `<div class="${cls}">${i+1}</div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function showLevelCompleteCard(t, prevBest){
+  overlay.classList.remove('hidden');
+  const isLast = levelIndex === LEVELS.length-1;
+  const improved = prevBest && t < prevBest;
+  cardContent.innerHTML = `
+    <h1>${isLast ? 'You Beat Roll' : 'Level Complete'}</h1>
+    <div class="big">${t.toFixed(2)}s</div>
+    <p>${improved ? 'New best time on this stage!' : (isLast ? 'All ten stages cleared. Nicely rolled.' : 'Stage ' + (levelIndex+1) + ' — ' + LEVELS[levelIndex].name)}</p>
+    ${dotsHtml()}
+    <div>
+      <button id="nextBtn">${isLast ? 'Play Again' : 'Next Level'}</button>
+      <button id="retryBtn" class="secondary">Retry</button>
+    </div>
+  `;
+  document.getElementById('nextBtn').onclick = () => {
+    if(isLast){
+      levelIndex = 0;
+    } else {
+      levelIndex++;
+    }
+    beginLevel();
+  };
+  document.getElementById('retryBtn').onclick = () => {
+    beginLevel();
+  };
+}
+
+function beginLevel(){
+  overlay.classList.add('hidden');
+  loadLevel(levelIndex);
+  running = true;
+}
+
+// ---------- Rendering ----------
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // stage background
+  ctx.fillStyle = '#11141b';
+  ctx.fillRect(0,0,W,H);
+
+  // subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for(let x=0; x<W; x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0; y<H; y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  const lvl = LEVELS[levelIndex];
+
+  // holes
+  for(const h of lvl.holes){
+    const grad = ctx.createRadialGradient(h.x,h.y,2,h.x,h.y,h.r);
+    grad.addColorStop(0, '#000000');
+    grad.addColorStop(1, '#1a1d26');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(h.x,h.y,h.r,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  // goal
+  const g = lvl.goal;
+  const pulse = 0.5 + 0.5*Math.sin(tGlobal*3);
+  ctx.fillStyle = `rgba(94,234,212,${0.18+pulse*0.12})`;
+  ctx.fillRect(g.x,g.y,g.w,g.h);
+  ctx.strokeStyle = '#5eead4';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(g.x,g.y,g.w,g.h);
+
+  // walls
+  ctx.fillStyle = '#2a3142';
+  for(const w of lvl.walls){
+    ctx.fillRect(w.x,w.y,w.w,w.h);
+  }
+  ctx.strokeStyle = '#3a4254';
+  ctx.lineWidth = 1;
+  for(const w of lvl.walls){
+    ctx.strokeRect(w.x,w.y,w.w,w.h);
+  }
+
+  // movers
+  ctx.fillStyle = '#f472b6';
+  for(const m of lvl.movers){
+    ctx.fillRect(m.x,m.y,m.w,m.h);
+  }
+
+  // ball
+  if(!falling || fallAnim < 1){
+    const scale = falling ? Math.max(0, 1-fallAnim) : 1;
+    const r = BALL_R * scale;
+    ctx.save();
+    ctx.globalAlpha = falling ? Math.max(0,1-fallAnim) : 1;
+    const grad = ctx.createRadialGradient(ball.x-4,ball.y-4,1,ball.x,ball.y,r);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.5, '#5eead4');
+    grad.addColorStop(1, '#0f766e');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(ball.x,ball.y,r,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ---------- Loop ----------
+let lastT = performance.now();
+function loop(now){
+  const dt = Math.min(0.033, (now-lastT)/1000);
+  lastT = now;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ---------- Input ----------
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if(e.key.toLowerCase()==='r' && running){
+    loadLevel(levelIndex);
+  }
+  if(['arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase())){
+    e.preventDefault();
+  }
+});
+window.addEventListener('keyup', e => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+startBtn.onclick = () => {
+  beginLevel();
+};
+
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

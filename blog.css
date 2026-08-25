@@ -1,35 +1,39 @@
 /* ============================================================
-   BLOG PAGE
+   BLOG INDEX
    ============================================================ */
 
 .blog-main {
   padding: 56px 56px 80px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 2px;
   max-width: 860px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* ---- Post card ---- */
+/* ---- Post card (index) ---- */
 .post-card {
+  display: block;
+  text-decoration: none;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
   background: var(--bg);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
+  padding: 0 0 20px;
+}
+
+.post-card + .post-card {
+  border-top: none;
 }
 
 .post-card:hover {
-  border-color: #4A3828;
+  border-color: var(--accent);
+  background: rgba(140, 26, 48, 0.04);
 }
 
-/* ---- Post header ---- */
 .post-header {
-  padding: 28px 32px 20px;
-  border-bottom: 1px solid var(--line);
+  padding: 28px 32px 16px;
 }
 
 .post-meta {
@@ -43,7 +47,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: #7A6A54;
+  color: #7A5A62;
 }
 
 .post-tag {
@@ -52,104 +56,102 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
-  background: rgba(127, 168, 184, 0.12);
+  background: rgba(140, 26, 48, 0.12);
   padding: 3px 8px;
-  border-radius: 3px;
 }
 
 .post-title {
   font-family: var(--font-display);
-  font-size: clamp(20px, 2.5vw, 28px);
+  font-size: clamp(18px, 2.2vw, 26px);
   font-weight: 500;
   font-style: italic;
-  color: var(--accent2);
+  color: var(--text);
   line-height: 1.2;
 }
 
-/* ---- Post body (collapsed) ---- */
-.post-body-wrap {
-  position: relative;
-  max-height: 112px;
-  overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.post-body {
-  padding: 24px 32px 8px;
-}
-
-.post-body p {
+.post-excerpt {
   font-family: var(--font-display);
-  font-size: 16px;
-  line-height: 1.75;
-  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  color: #7A5A62;
+  padding: 0 32px;
   margin-bottom: 16px;
 }
 
-.post-body p:last-child {
-  margin-bottom: 0;
-}
-
-.post-body em {
+.post-excerpt em {
   font-style: italic;
   color: var(--accent2);
 }
 
-/* Gradient fade indicating more content below */
-.post-fade {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 72px;
-  background: linear-gradient(to bottom, transparent, var(--bg));
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-/* ---- Expand button ---- */
-.post-expand-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 32px;
-  background: none;
-  border: none;
-  border-top: 1px solid var(--line);
-  cursor: pointer;
+.post-read {
+  display: inline-block;
+  margin-left: 32px;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent2);
-  transition: background 0.15s, color 0.15s;
-}
-
-.post-expand-btn:hover {
-  background: rgba(201, 122, 61, 0.12);
-}
-
-.btn-arrow {
-  transition: transform 0.3s ease;
-  flex-shrink: 0;
-}
-
-/* ---- Expanded state ---- */
-.post-card--expanded .post-body-wrap {
-  max-height: 2000px;
-}
-
-.post-card--expanded .post-fade {
-  opacity: 0;
-}
-
-.post-card--expanded .btn-arrow {
-  transform: rotate(180deg);
+  color: var(--accent);
 }
 
 /* ============================================================
-   HOMEPAGE BLOG PREVIEW SECTION (shared styles)
+   INDIVIDUAL POST PAGE
+   ============================================================ */
+
+.post-article {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 56px 56px 96px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.post-back {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #7A5A62;
+  text-decoration: none;
+  margin-bottom: 48px;
+  transition: color 0.2s;
+}
+
+.post-back:hover {
+  color: var(--text);
+}
+
+.post-article-header {
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.post-article-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.15;
+  margin-top: 16px;
+  text-wrap: balance;
+}
+
+.post-article-body {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.post-article-body p {
+  font-family: var(--font-display);
+  font-size: clamp(17px, 1.6vw, 20px);
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+/* ============================================================
+   HOMEPAGE BLOG PREVIEW SECTION
    ============================================================ */
 
 .home-blog {
@@ -182,15 +184,16 @@
 }
 
 .home-post-card {
+  display: block;
+  text-decoration: none;
   border: 1px solid var(--line);
-  border-radius: 8px;
   padding: 24px 28px;
   background: var(--bg);
   transition: border-color 0.2s;
 }
 
 .home-post-card:hover {
-  border-color: #4A3828;
+  border-color: var(--accent);
 }
 
 .home-post-meta {
@@ -204,7 +207,7 @@
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: #7A6A54;
+  color: #7A5A62;
 }
 
 .home-post-tag {
@@ -220,7 +223,7 @@
   font-size: 18px;
   font-weight: 500;
   font-style: italic;
-  color: var(--accent2);
+  color: var(--text);
   margin-bottom: 10px;
   line-height: 1.3;
 }
@@ -229,7 +232,7 @@
   font-family: var(--font-display);
   font-size: 14px;
   line-height: 1.7;
-  color: #7A6A54;
+  color: #7A5A62;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -239,9 +242,10 @@
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .blog-main { padding: 36px 24px 56px; }
-  .post-header { padding: 22px 20px 16px; }
-  .post-body { padding: 20px 20px 8px; }
-  .post-expand-btn { padding: 14px 20px; }
+  .post-article { padding: 40px 24px 72px; }
+  .post-header { padding: 22px 20px 14px; }
+  .post-excerpt { padding: 0 20px; }
+  .post-read { margin-left: 20px; }
   .home-blog { padding: 56px 24px; }
   .home-blog-header { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
